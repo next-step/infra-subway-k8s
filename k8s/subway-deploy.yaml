@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+    name: my-app
+spec: 
+    replicas: 5
+    # 컨테이너의 라벨을 선택    
+    selector: 
+        matchLabels:
+            run: app
+    strategy: 
+        # RollingUpdate | Recreate (잘 안쓰임)
+        type: RollingUpdate
+
+        rollingUpdate:
+            # RollingUpdate 중 최대 중단 Pod 허용개수 (또는 비율)
+            maxUnavailable: 25%
+            # RollingUpdate 중 최대 초과 Pod 허용개수 (또는 비율)
+            maxSurge: 25%            
+    template:
+        metadata:
+            labels: 
+                run: app
+        # Pod의 spec과 같음
+        spec:
+            containers:
+            - name: subway
+              image: kkwan0226/subway:1.0
+              env:
+              - name: SPRING_PROFILES_ACTIVE
+                value: prod
+              - name: DB_URL
+                value: 100.124.119.197:3306/subway 
+              ports:
+              - containerPort: 8080

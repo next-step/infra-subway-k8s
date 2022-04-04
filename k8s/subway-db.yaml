@@ -1,0 +1,13 @@
+apiVersion: v1
+
+kind: Pod
+metadata:
+  name: subway-db
+ 
+spec:
+  containers:
+  - image: brainbackdoor/data-subway:0.0.1
+    name: data-subway
+    ports:
+    - containerPort: 3306
+      protocol: TCP
