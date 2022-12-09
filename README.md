@@ -59,6 +59,9 @@ npm run dev
 $ stress -c 2
 ```
 
+---
+
+
 3. 성능 개선 결과를 공유해주세요 (Smoke, Load, Stress 테스트 결과)
 
 ### 3단계 - 쿠버네티스로 구성하기
@@ -76,6 +79,7 @@ $ stress -c 2
 
 2. Data Cache 설정하기
 
+---
 
 ### [추가] 클러스터 운영하기
 1. kibana 링크를 알려주세요
