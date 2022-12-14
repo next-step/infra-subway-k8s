@@ -45,6 +45,11 @@ npm run dev
 ### 1단계 - 화면 응답 개선하기
 1. 성능 개선 결과를 공유해주세요 (Smoke, Load, Stress 테스트 결과)
 
+* http_req_duration
+  * smoke: 21.12ms > 17.9ms(-3.22ms) 
+  * load: 145.05ms > 55.84ms(-89.21ms)
+  * stress: 1060ms > 540.68ms(-519.32ms)
+
 ### Smoke
 <table>
     <thead>
