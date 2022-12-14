@@ -45,7 +45,76 @@ npm run dev
 ### 1단계 - 화면 응답 개선하기
 1. 성능 개선 결과를 공유해주세요 (Smoke, Load, Stress 테스트 결과)
 
+* http_req_duration
+  * smoke: 21.12ms > 17.9ms(-3.22ms) 
+  * load: 145.05ms > 55.84ms(-89.21ms)
+  * stress: 1060ms > 540.68ms(-519.32ms)
+
+### Smoke
+<table>
+    <thead>
+        <tr>
+            <td>before</td>
+            <td>after</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><img src="/images/smoke_before_k6.png" alt="smoke before k6" width="640px;" height="640px;"></td>
+            <td><img src="/images/smoke_after_k6.png" alt="smoke after k6" width="640px;" height="640px;"></td>
+        </tr> 
+        <tr>
+            <td><img src="/images/smoke_before_grafana.png" alt="smoke before grafana" width="640px;" height="640px;"></td>
+            <td><img src="/images/smoke_after_grafana.png" alt="smoke after grafana" width="640px;" height="640px;"></td>
+        </tr>
+    </tbody>
+</table>
+
+### Load
+<table>
+    <thead>
+        <tr>
+            <td>before</td>
+            <td>after</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><img src="/images/load_before_k6.png" alt="load before k6" width="640px;" height="640px;"></td>
+            <td><img src="/images/load_after_k6.png" alt="load after k6" width="640px;" height="640px;"></td>
+        </tr> 
+        <tr>
+            <td><img src="/images/load_before_grafana.png" alt="load before grafana" width="640px;" height="640px;"></td>
+            <td><img src="/images/load_after_grafana.png" alt="load after grafana" width="640px;" height="640px;"></td>
+        </tr>
+    </tbody>
+</table>
+
+### Stress
+<table>
+    <thead>
+        <tr>
+            <td>before</td>
+            <td>after</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><img src="/images/stress_before_k6.png" alt="stress before k6" width="640px;" height="640px;"></td>
+            <td><img src="/images/stress_after_k6.png" alt="stress after k6" width="640px;" height="640px;"></td>
+        </tr> 
+        <tr>
+            <td><img src="/images/stress_before_grafana.png" alt="stress before grafana" width="640px;" height="640px;"></td>
+            <td><img src="/images/stress_after_grafana.png" alt="stress after grafana" width="640px;" height="640px;"></td>
+        </tr>
+    </tbody>
+</table>
+
+
 2. 어떤 부분을 개선해보셨나요? 과정을 설명해주세요
+* gzip 압축
+* cache 설정
+* http2 설정
 
 ---
 
