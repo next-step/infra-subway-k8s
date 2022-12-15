@@ -57,7 +57,14 @@ npm run dev
 
 1. Launch Template 링크를 공유해주세요.
 
+https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#LaunchTemplateDetails:launchTemplateId=lt-07ad780a983efd43e
+
 2. cpu 부하 실행 후 EC2 추가생성 결과를 공유해주세요. (Cloudwatch 캡쳐)
+
+기존 설정을 3 대 가용해서 시작했는데, CPU 점유율이 높아지지 않아 줄어드는 것을 확인했습니다..!
+
+<img width="1103" alt="스크린샷 2022-12-16 오전 1 39 15" src="https://user-images.githubusercontent.com/92219795/207917552-7d971f5c-d521-4342-a904-37fc5c9e5c8a.png">
+
 
 ```sh
 $ stress -c 2
