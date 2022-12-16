@@ -45,30 +45,36 @@ npm run dev
 ### 1단계 - 화면 응답 개선하기
 1. 성능 개선 결과를 공유해주세요 (Smoke, Load, Stress 테스트 결과)
 
-단일 케이스(Smoke)의 경우 오히려 성능이 떨어졌지만, 어느정도 부하가 있을 땐(Load, Stress) 성능이 개선되었음을 확인했습니다. 
+- 측정 대상 :http_req_duration (ms)
+- 표기 순서 : NoTuning / gzip 개선 / cache 개선 / http2 개선 / AllTuning 
+- 결과 
+    - Smoke Test 결과 
+      - 3 / 4 / 3 / 4 / 4
+    - Load Test 결과
+      - 49 / 55 / 48 / 48 / 44
+    - Stress Test 결과
+      - 130 / 132 / 182 / 201 / 178
+- 참조
+    - smoke.js 테스트 결과 (NoTuning, gzip, cache, http2, AllTuning 순서)
+![normal_smoke.JPG](image/normal_smoke.JPG)
+![gzip_smoke.JPG](image/gzip_smoke.JPG)
+![cache_smoke.JPG](image/cache_smoke.JPG)
+![http_smoke.JPG](image/http_smoke.JPG)
+![last_smoke.JPG](image/last_smoke.JPG)
 
+    - load.js 테스트 결과 (NoTuning, gzip, cache, http2, AllTuning 순서)
+![normal_load.JPG](image/normal_load.JPG)
+![gzip_load.JPG](image/gzip_load.JPG)
+![cache_load.JPG](image/cache_load.JPG)
+![http_load.JPG](image/http_load.JPG)
+![last_load.JPG](image/last_load.JPG)
 
-http_req_duration 기준
-- Smoke Test 결과
-  - 3.09ms -> 3.72ms
-- Load Test 결과
-  - 4.88ms -> 3.72ms
-- Stress Test 결과
-  - 76.47ms -> 8.57ms
-
-
-- 개선 전 Smoke Test
-   ![smokeBefore.JPG](image/smokeBefore.JPG)
-- 개선 후 Smoke Test
-   ![smokeAfter.JPG](image/smokeAfter.JPG)
-- 개선 전 Load Test
-   ![loadBefore.JPG](image/loadBefore.JPG)
-- 개선 후 Load Test
-   ![loadAfter.JPG](image/loadAfter.JPG)
-- 개선 전 Stress Test
-   ![stressBefore.JPG](image/stressBefore.JPG)
-- 개선 후 Stress Test
-   ![stressAfter.JPG](image/stressAfter.JPG)
+    - stress.js 테스트 결과 (NoTuning, gzip, cache, http2, AllTuning 순서)
+![normal_stress.JPG](image/normal_stress.JPG)
+![gzip_stress.JPG](image/gzip_stress.JPG)
+![cache_stress.JPG](image/cache_stress.JPG)
+![http_stress.JPG](image/http_stress.JPG)
+![last_stress.JPG](image/last_stress.JPG)
 
 2. 어떤 부분을 개선해보셨나요? 과정을 설명해주세요
 - 아래와 같이 nginx 설정을 변경하였습니다.
