@@ -61,9 +61,13 @@ https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#Lau
 
 2. cpu 부하 실행 후 EC2 추가생성 결과를 공유해주세요. (Cloudwatch 캡쳐)
 
-기존 설정을 3 대 가용해서 시작했는데, CPU 점유율이 높아지지 않아 줄어드는 것을 확인했습니다..!
+CPU가 50% 기준으로 인스턴스를 늘리도록 설정했고, 부하테스트를 진행한 결과와 같이 인스턴스 개수가 늘어난 것을 확인했습니다.
 
-<img width="1103" alt="스크린샷 2022-12-16 오전 1 39 15" src="https://user-images.githubusercontent.com/92219795/207917552-7d971f5c-d521-4342-a904-37fc5c9e5c8a.png">
+<img width="278" alt="스크린샷 2022-12-16 오전 10 53 57" src="https://user-images.githubusercontent.com/92219795/208003960-cf7c08e9-82d8-4572-b1d6-ac45fbf2b3a9.png">
+
+<img width="1085" alt="스크린샷 2022-12-16 오전 10 53 43" src="https://user-images.githubusercontent.com/92219795/208003937-aa9028b5-4e7d-4379-ab3e-2d358fd90529.png">
+
+> 최대 개수로 지정한 7대 보다 넘을 것을 고려해서 20대로 변경했습니다.
 
 
 ```sh
