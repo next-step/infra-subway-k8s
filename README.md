@@ -94,9 +94,13 @@ npm run dev
 ### 2단계 - 스케일 아웃
 
 1. Launch Template 링크를 공유해주세요.
+    
+    - https://ap-northeast-2.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-2#LaunchTemplateDetails:launchTemplateId=lt-00158f39fb0d83a1e
+   
 
 2. cpu 부하 실행 후 EC2 추가생성 결과를 공유해주세요. (Cloudwatch 캡쳐)
-
+   ![countInstance.JPG](image/countInstance.JPG)
+   ![cpuUtilization.JPG](image/cpuUtilization.JPG)
 ```sh
 $ stress -c 2
 ```
@@ -105,6 +109,22 @@ $ stress -c 2
 
 
 3. 성능 개선 결과를 공유해주세요 (Smoke, Load, Stress 테스트 결과)
+    - smoke 테스트 결과 (ms)
+        - 4 > 5
+    - load 테스트 결과 (ms)
+        - 44 > 4
+    - stress 테스트 결과 (ms)   
+        - 178 > 19
+    - 참고
+        - smoke 테스트
+![last_smoke.JPG](image/last_smoke.JPG)
+![autuscailing_smoke.JPG](image/autuscailing_smoke.JPG)
+        - load 테스트
+![last_load.JPG](image/last_load.JPG)
+![autuscailing_load.JPG](image/autuscailing_load.JPG)
+        - smoke 테스트
+![last_stress.JPG](image/last_stress.JPG)
+![autuscailing_stress.JPG](image/autuscailing_stress.JPG)
 
 ### 3단계 - 쿠버네티스로 구성하기
 1. 클러스터를 어떻게 구성했는지 알려주세요~ (마스터 노드 : n 대, 워커 노드 n대)
