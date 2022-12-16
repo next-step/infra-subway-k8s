@@ -76,6 +76,13 @@ npm run dev
 ![http_stress.JPG](image/http_stress.JPG)
 ![last_stress.JPG](image/last_stress.JPG)
 
+    - webpagetest 테스트 결과 (NoTuning, gzip, cache, http2, AllTuning 순서)
+![normal_webpagetest.JPG](image/normal_webpagetest.JPG)
+![gzip_webpagetest.JPG](image/gzip_webpagetest.JPG)
+![cache_webpagetest.JPG](image/cache_webpagetest.JPG)
+![http_webpagetest.JPG](image/http_webpagetest.JPG)
+![last_webpagetest.JPG](image/last_webpagetest.JPG)
+
 2. 어떤 부분을 개선해보셨나요? 과정을 설명해주세요
 - 아래와 같이 nginx 설정을 변경하였습니다.
     - content-encoding 추가 (gzip)
