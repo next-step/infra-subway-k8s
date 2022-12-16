@@ -67,16 +67,18 @@ npm run dev
 
 1. Launch Template 링크를 공유해주세요.
 
+- https://ap-northeast-2.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-2#LaunchTemplateDetails:launchTemplateId=lt-0f6d07a5aab91ad3f
+
 2. cpu 부하 실행 후 EC2 추가생성 결과를 공유해주세요. (Cloudwatch 캡쳐)
 
-```sh
-$ stress -c 2
-```
-
----
-
+- `/result/load/img` 경로에 추가 완료
+- https://ap-northeast-2.console.aws.amazon.com/cloudwatch/home?region=ap-northeast-2#dashboards:name=jeongmin94-dashboard;start=PT15M
 
 3. 성능 개선 결과를 공유해주세요 (Smoke, Load, Stress 테스트 결과)
+
+- `/result/load` 경로에 추가 완료
+
+- 
 
 ### 3단계 - 쿠버네티스로 구성하기
 1. 클러스터를 어떻게 구성했는지 알려주세요~ (마스터 노드 : n 대, 워커 노드 n대)
