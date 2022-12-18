@@ -112,9 +112,81 @@ npm run dev
 
 
 2. 어떤 부분을 개선해보셨나요? 과정을 설명해주세요
-* gzip 압축
-* cache 설정
-* http2 설정
+### 개선 항목 별 부하테스트
+#### gizp 적용
+* Smoke
+
+![smoke-gzip-k6](/images/smoke-gzip-k6.png)
+
+![smoke-gzip-grafana](/images/smoke-gzip-grafana.png)
+
+* Load
+
+![load-gzip-k6](/images/load-gzip-k6.png)
+
+![load-gzip-grafana](/images/load-gzip-grafana.png)
+
+* Stress
+
+![stress-gzip-k6](/images/stress-gzip-k6.png)
+
+![stress-gzip-grafana](/images/stress-gzip-grafana.png)
+
+* pagespeed
+
+![gzip-pagespeed-mobile](/images/gzip-pagespeed-mobile.png)
+
+![gzip-pagespeed-web](/images/gzip-pagespeed-web.png)
+
+#### cache 적용
+* Smoke
+
+![smoke-cache-k6](/images/smoke-cache-k6.png)
+
+![smoke-cache-grafana](/images/smoke-cache-grafana.png)
+
+* Load
+
+![load-cache-k6](/images/load-cache-k6.png)
+
+![load-cache-grafana](/images/load-cache-grafana.png)
+
+* Stress
+
+![stress-cache-k6](/images/stress-cache-k6.png)
+
+![stress-cache-grafana](/images/stress-cache-grafana.png)
+
+* pagespeed
+
+![cache-pagespeed-mobile](/images/cache-pagespeed-mobile.png)
+
+![cache-pagespeed-web](/images/cache-pagespeed-web.png)
+
+#### http2 적용
+* Smoke
+
+![smoke-http2-k6](/images/smoke-http2-k6.png)
+
+![smoke-http2-grafana](/images/smoke-http2-grafana.png)
+
+* Load
+
+![load-http2-k6](/images/load-http2-k6.png)
+
+![load-http2-grafana](/images/load-http2-grafana.png)
+
+* Stress
+
+![stress-http2-k6](/images/stress-http2-k6.png)
+
+![stress-http2-grafana](/images/stress-http2-grafana.png)
+
+* pagespeed
+
+![http2-pagespeed-mobile](/images/http2-pagespeed-mobile.png)
+
+![http2-pagespeed-web](/images/http2-pagespeed-web.png)
 
 ---
 
