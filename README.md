@@ -44,8 +44,34 @@ npm run dev
 
 ### 1단계 - 화면 응답 개선하기
 1. 성능 개선 결과를 공유해주세요 (Smoke, Load, Stress 테스트 결과)
+- 생각보다 크게 성능 향상이 되진 않았는데, cache나 log 때문인지 public 서버의 용량이 부족해지면서 종종 앱 자체가 느려지는 현상이 있었습니다.
+- 테스트 중 table select를 하는 작업이 있는데 해당 부분에서 성능 향상이 크지 않아 평균응답 시간이 튜닝 전/후로 별 차이가 없었습니다.
+
+- 성능 개선 전 smoke 테스트
+  ![./images/before-smoke.png](./images/before-smoke.png)
+
+- 성능 개선 후 smoke 테스트
+  ![./images/after-smoke.png](./images/after-smoke.png)
+
+- 성능 개선 전 load 테스트
+  ![./images/before-load.png](./images/before-load.png)
+
+- 성능 개선 후 load 테스트
+  ![./images/after-load.png](./images/after-load.png)
+
+- 성능 개선 전 stress 테스트
+  ![./images/after-stress.png](./images/before-stress.png)
+
+- 성능 개선 후 stress 테스트
+  ![./images/after-stress.png](./images/after-stress.png)
 
 2. 어떤 부분을 개선해보셨나요? 과정을 설명해주세요
+- 이전 과제들을 하면서 `index.html`에서 , `vendors.js`를 import할때 응답시간이 오래걸리는 것을 확인하고 비동기 방식으로 import하도록 했습니다. (+ `main.js`에도 적용)
+- reverse proxy를 튜닝했습니다.
+  - gzip 압축 적용
+  - TLS, HTTP/2 설정
+  - cache 설정
+- 디스크 공간 확보를 위해 불필요한 데이터 삭제(사용하지 않는 Docker images, log 등)
 
 ---
 
