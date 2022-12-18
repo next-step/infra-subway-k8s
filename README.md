@@ -128,10 +128,39 @@ $ stress -c 2
 
 ### 3단계 - 쿠버네티스로 구성하기
 1. 클러스터를 어떻게 구성했는지 알려주세요~ (마스터 노드 : n 대, 워커 노드 n대)
-
+    - 마스터 노드 1대, 워커 노드 3대
 2. 스트레스 테스트 결과를 공유해주세요 (기존에 container 한대 운영시 한계점도 같이 공유해주세요)
 
+- 환경
+    - stressTestCase1 : Replicas = 1, VUser = 2000
+    - stressTestCase2 : Replicas = 10, VUser = 2000
+
+- 결과
+    - case 1 : 7ms (max)
+    - case 2 : 3ms (max)
+- 결론
+    - Replicas 를 여러 개로 구성한 경우, 적절한 로드 밸런싱을 통해 성능 한계가 더 높아진다.
+    - Container 를 한대로 운영 시, 트래픽이 몰리는 Stress 상황에서 원활한 서비스가 이루어지지 않을 수 있다.
+
+- 참고 
+
+case1 : 
+
+![case1.JPG](image/case1.JPG)
+![case1_stress.JPG](image/case1_stress.JPG)
+
+case2 :
+
+![case2.JPG](image/case2.JPG)
+![case2_stress.JPG](image/case2_stress.JPG)
+
 3. 현재 워커노드에서 몇대의 컨테이너를 운영중인지 공유해주세요
+
+- 10대 (파드 내 각각 한개 컨테이너)
+
+![case2.JPG](image/case2.JPG)
+![containerCountInPod.JPG](image/containerCountInPod.JPG)
+
 
 ---
 
