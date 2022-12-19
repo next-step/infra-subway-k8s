@@ -18,6 +18,19 @@ echo -e "${txtylw}=======================================${txtrst}"
 echo -e "${txtgrn}  << Script 🧐 >>${txtrst}"
 echo -e "${txtylw}=======================================${txtrst}"
 
+function move_project() {
+  echo -e ""
+  echo -e ">> Move Application Root 🏃♂️ "
+  cd ~/nextstep/infra-subway-k8s
+}
+
+function checkout_branch() {
+  echo -e ""
+  echo -e ">> Checkout Branch 🏃♂️ "
+  git checkout $BRANCH
+}
+
+
 function valid_parameter() {
   if [ "$BRANCH" == ""  ]; then
     echo "please write deploy target branch"
@@ -55,6 +68,11 @@ function check_branch_df() {
   fi
 }
 
+function fetch_branch() {
+  echo -e ""
+  echo -e ">> Fetch Branch 🏃♂️ "
+}
+
 ## 배포할 브랜치 저장소 pull
 function pull_branch() {
   echo -e ""
@@ -89,14 +107,24 @@ function run_application() {
   nohup java -Dspring.profiles.active="${PROFILE}" -Djava.security.egd=file:/dev/./urandom -jar ${BUILD_PATH}/"${JAR_NAME}" 1> application.log 2>&1 &
 }
 
+
 ## deploy.sh 파라미터 유효성 검증
-valid_parameter;
+#valid_parameter;
+
+## root 프로젝트 이동
+move_project;
+
+## branch 이동
+checkout_branch;
 
 ## 현재 branch 확인
-check_current_branch
+#check_current_branch
 
 ## branch 변경 유무 확인
 #check_branch_df;
+
+## origin branch fetch
+fetch_branch;
 
 ## remote branch 로컬 반영
 pull_branch;
