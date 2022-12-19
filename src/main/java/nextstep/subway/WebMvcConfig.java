@@ -40,7 +40,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         Filter etagHeaderFilter = new ShallowEtagHeaderFilter();
         registration.setFilter(etagHeaderFilter);
-        registration.addUrlPatterns("/**");
+        registration.addUrlPatterns("/*");
         return registration;
     }
 }

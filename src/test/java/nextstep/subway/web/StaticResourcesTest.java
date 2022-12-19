@@ -31,6 +31,16 @@ public class StaticResourcesTest {
                 .cacheControl(CacheControl.noCache().cachePrivate())
                 .expectBody(String.class)
                 .returnResult();
+
+        String eTag = response.getResponseHeaders().getETag();
+
+        client
+                .get()
+                .uri(uri)
+                .header("If-None-Match", eTag)
+                .exchange()
+                .expectStatus()
+                .isNotModified();
     }
 
     @Test
@@ -46,6 +56,16 @@ public class StaticResourcesTest {
                 .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
                 .expectBody(String.class)
                 .returnResult();
+
+        String eTag = response.getResponseHeaders().getETag();
+
+        client
+                .get()
+                .uri(uri)
+                .header("If-None-Match", eTag)
+                .exchange()
+                .expectStatus()
+                .isNotModified();
     }
 
 }
