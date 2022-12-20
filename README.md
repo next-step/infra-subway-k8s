@@ -170,6 +170,24 @@ case2 :
 
 2. Data Cache 설정하기
 
+3. no-cache, no-store, must-revalidate 를 모두 설정하는 이유
+    - 특정 상황과 브라우저에 따라 캐시라고 판단하는 기준이 다를 수 있기 때문에, 확실한 캐시 무효화를 위해 3가지 옵션을 모두 설정합니다. 
+
+- 참고
+  - 테스트 결과
+    - NoConfig
+  ![1_load.JPG](image/1_load.JPG)
+  ![1_stress.JPG](image/1_stress.JPG)
+    - gzip, cache-control  
+  ![2_load.JPG](image/2_load.JPG)
+  ![2_stress.JPG](image/2_stress.JPG)
+    - Spring Data Cache(Redis)
+  ![3_load.JPG](image/3_load.JPG)
+  ![3_stress.JPG](image/3_stress.JPG)
+    - Etag
+  ![4_load.JPG](image/4_load.JPG)
+  ![4_stress.JPG](image/4_stress.JPG)
+
 ---
 
 ### [추가] 클러스터 운영하기
