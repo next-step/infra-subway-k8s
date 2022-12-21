@@ -80,6 +80,7 @@ npm run dev
 ### 2단계 - 스케일 아웃
 
 1. Launch Template 링크를 공유해주세요.
+- https://ap-northeast-2.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-2#LaunchTemplateDetails:launchTemplateId=lt-0d79da663bc22046a
 
 2. cpu 부하 실행 후 EC2 추가생성 결과를 공유해주세요. (Cloudwatch 캡쳐)
 
@@ -91,6 +92,19 @@ $ stress -c 2
 
 
 3. 성능 개선 결과를 공유해주세요 (Smoke, Load, Stress 테스트 결과)
+최소 인스턴스: 2
+최대 인스턴스: 10
+
+### load 테스트
+- load 테스트의 경우 근소하게 request 응답 시간과 요청시간에 개선이 있었다.
+
+### stress 테스트
+- 전체적인 요청 성공률에 많은 차이가 있었다.
+- mainpage 12% -> 92% 개선
+- login 14% -> 100% 개선
+- search path 77% -> 92% 개선 
+- *스케일 아웃 전과 후에 서버 응답률에 차이가 5배 넘게 차이가 나는 것을 확인 가능*
+
 
 ### 3단계 - 쿠버네티스로 구성하기
 1. 클러스터를 어떻게 구성했는지 알려주세요~ (마스터 노드 : n 대, 워커 노드 n대)
