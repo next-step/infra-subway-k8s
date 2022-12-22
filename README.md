@@ -78,14 +78,58 @@ npm run dev
 
 - `/result/load` 경로에 추가 완료
 
-- 
-
 ### 3단계 - 쿠버네티스로 구성하기
 1. 클러스터를 어떻게 구성했는지 알려주세요~ (마스터 노드 : n 대, 워커 노드 n대)
 
+- 마스터 노드 1대
+- 워커 노드 최대 16대
+- 데이터베이스 전용 EC2 1대
+
 2. 스트레스 테스트 결과를 공유해주세요 (기존에 container 한대 운영시 한계점도 같이 공유해주세요)
 
+- `/result/k8s/load/result.md`에 작성 완료
+- 컨테이너를 한대만 운영하면 인스턴스 하나에 서버를 실행시키는 것과 크게 다르지 않은 것 같음
+  - 다만 쿠버네티스 덕분에 모종의 이유로 애플리케이션이 종료되어도 다시 실행시켜준다는 점에서 안정성이 조금 더 높아보임
+  - 테스트 환경이 이상한건지 워커 노드에 컨테이너의 개수를 1대를 운영할 때 가장 성능이 좋게 나옴
+  - 해당 현상의 원인이 무엇인지 파악이 힘듬
+
 3. 현재 워커노드에서 몇대의 컨테이너를 운영중인지 공유해주세요
+
+- replicas 6
+
+```yaml
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: my-app
+
+spec:
+    replicas: 6
+    # 컨테이너의 라벨을 선택
+    selector:
+        matchLabels:
+            run: app
+    strategy:
+        # RollingUpdate | Recreate (잘 안쓰임)
+        type: RollingUpdate
+
+        rollingUpdate:
+            # RollingUpdate 중 최대 중단 Pod 허용개수 (또는 비율)
+            maxUnavailable: 25%
+            # RollingUpdate 중 최대 초과 Pod 허용개수 (또는 비율)
+            maxSurge: 25%
+    template:
+        metadata:
+            labels:
+                run: app
+        # Pod의 spec과 같음
+        spec:
+            containers:
+            - name: subway
+              image: kim9099i/subway:0.0.5
+
+```
 
 ---
 
