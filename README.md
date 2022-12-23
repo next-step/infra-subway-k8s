@@ -44,8 +44,46 @@ npm run dev
 
 ### 1단계 - 화면 응답 개선하기
 1. 성능 개선 결과를 공유해주세요 (Smoke, Load, Stress 테스트 결과)
+---
+Load 테스트 결과를 공유하겠다.
+
+테스트 결과 먼저 얘기를 하자면 http2 를 적용하였을 경우에만 http_req_blocked 시간이 8배 정도의 개선이 있었다.
+req_sending 은 오히려 2배 가량 늘어났다.
+
+그 외의 지표는 크게 의미가 없었다.
+
+vus_max	32				
+					
+|p(95)              |nothing|gzip   |cache  |http2  |all    
+|-------------------|-------|-------|-------|-------|-------
+|http_req_blocked	|5.75us	|5.95us	|5.85us	|729ns	|731ns
+|http_req_connectin |0s 	|0s 	|0s 	|0s 	|0s
+|http_req_duration	|1.43s	|1.36s	|1.36s	|1.35s	|1.38s
+|http_req_receiving	|7.34ms	|6.41ms	|6.17ms	|7.82ms	|8.69ms
+|http_req_sending	|31.27us|35.28us|33.02us|75.2us |73.78us
+|tls_handshaking	|0s	    |0s 	|0s 	|0s 	|0s
+|http_req_waiting	|1.43s	|1.36s	|1.36s	|1.35s	|1.38s
+|http_reqs      	|5312	|5428	|5508	|5480	|5496
+|iteration_duration	|3.62s	|3.47s	|3.49s	|3.47s	|3.48s
+|iterations	        |1328	|1357	|1377	|1370	|1374
+---
+page speed 테스트 결과이다.
+
+gzip 을 적용했을 때, 큰 영향을 보였다.
+
+|           |nothing|gzip   |cache  |http2  |all    
+|-----------|-------|-------|-------|-------|-------
+|FCP|1.2s   |2.6s   |1.2s   |2.6s   |2.7s   |1.2s
+|LCP|1.2s   |2.7s   |1.4s   |2.7s   |2.8s   |1.2s
+|SI |1.4s   |2.6s   |1.8s   |2.6s   |2.9s   |1.4s
+|TTI|1.2s   |2.7s   |1.4s   |2.7s   |2.8s   |1.2s
+|TBT|20ms   |40ms   |70ms   |50ms   |70ms   |20ms
+|CLS|0.004  |0.004  |0.004  |0.004  |0.004  |0.004
+
+---
 
 2. 어떤 부분을 개선해보셨나요? 과정을 설명해주세요
+gzip, cache, http2 모두 nginx 설정을 통해 개선하였다.
 
 ---
 
