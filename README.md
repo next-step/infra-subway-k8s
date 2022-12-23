@@ -306,10 +306,28 @@ $ stress -c 2
 
 ### 3단계 - 쿠버네티스로 구성하기
 1. 클러스터를 어떻게 구성했는지 알려주세요~ (마스터 노드 : n 대, 워커 노드 n대)
+마스터 노드 : 1대, 워커 노드 3대
 
 2. 스트레스 테스트 결과를 공유해주세요 (기존에 container 한대 운영시 한계점도 같이 공유해주세요)
 
+* container: 10대
+![container10_k6](images/container10_k6.png)
+
+![container10_grafana](images/container10_grafana.png)
+
+* container: 1대
+![container1_k6](images/container1_k6.png)
+
+![container1_grafana](images/container1_grafana.png)
+
+#### 결론
+* 하나의 컨테이너로 운영하는 경우, 컨테이너에 부하가 증가하면서 응답 지연 발생 확인
+* 여러 컨테이너로 운영하는 경우, 요청이 많아짐에 따라 로드밸런서가 각 컨테이너에 부하분산하여 빠른 응답 시간 확인
+
 3. 현재 워커노드에서 몇대의 컨테이너를 운영중인지 공유해주세요
+10대
+
+![containers_count.png](images/containers_count.png)
 
 ---
 
