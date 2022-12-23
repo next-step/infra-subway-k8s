@@ -255,6 +255,29 @@ $ stress -c 2
     </tbody>
 </table>
 
+* load test 2
+  * ASG 인스턴스 설정: 최소: 3개, 최대 10개
+<table style="text-align: center">
+    <thead>
+        <tr>
+            <td>k6</td>
+            <td>grafana</td>
+        </tr>
+        <tr>
+            <td colspan="2">cloud watch</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><img src="/images/step2_load_k6_2.png" alt="load k6" width="640px;" height="640px;"></td>
+            <td><img src="/images/step2_load_grafana_2.png" alt="load grafana" width="640px;" height="640px;"></td>
+        </tr>
+        <tr>
+            <td colspan="2"><img src="/images/step2_load_cloudwatch_2.png" alt="load grafana" width="840px;" height="640px;"></td>
+        <tr>
+    </tbody>
+</table>
+
 ### Stress
 * CPU 이용률이 50%를 초과하여 인스턴스 3개 auto scaling(수행 인스턴스: 4개)
 
