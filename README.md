@@ -206,16 +206,76 @@ smoke, load, stress 에 사용된 스크립트를 수정함. (특히, stress 테
 - 인스턴스 9 대 기준 VUser 가 32 일때 목표로 하는 300ms 응답 시간을 안정적으로 얻을 수 있다.
 - VUser 32 이상이 되면 그떄부터 응답 시간이 1초로 확 늘어나게 된다. 
 - 인스턴스 1대와 비교하여 그래프의 경향을 봤을 떄, 인스턴스 1대의 경우, VUser 가 급격히 증가하는 부분에서 응답 지연이 치솟는 경향이 보였는데, 스케일 아웃을 통해 인스턴스가 나눠서 요청을 받아서 응답 지연이 치솟는 경향은 보이지 않음.
-- 다만 꾸준히 지연시간이 늘어나는 모습을 보이고 있음. (피크타임 VUser 32 기준 인스턴스 9대가 우리의 목표값 퍼포먼스를 낼 수 있는 한계 점임을 알았기 떄문에 이후 이벤트가 발생함을 대비하기 위해 보수적으로 9대의 2~3배 정도의 인스턴스를 늘려서 문제 상황에 대응하도록 한다.)
+- 다만 꾸준히 지연시간이 늘어나는 모습을 보이고 있음. 
+- 결론적으로, 인스턴스 9대일 때, (32 Active User 의) rps 약 107 ( = 32 (VUser) / 0.3 (T)) 까지는 300ms 내외로 응답하는 안정성을 갖추고 있다.
+- 이후 이벤트가 발생함을 대비하기 위해 보수적으로 9대의 2~3배 정도의 인스턴스를 늘려서 문제 상황에 대응하도록 한다.
 
 
 
 ### 3단계 - 쿠버네티스로 구성하기
 1. 클러스터를 어떻게 구성했는지 알려주세요~ (마스터 노드 : n 대, 워커 노드 n대)
+마스터 노드 1대, 워커 노드 9대 -> 9대 테스트 하며 목표 응답 시간을 받지 못해 16대 까지 늘림.
 
 2. 스트레스 테스트 결과를 공유해주세요 (기존에 container 한대 운영시 한계점도 같이 공유해주세요)
+- VUser 32 -> 64 -> 100 -> 200 -> 300 -> 200 순서로 각 구간 1분간 테스트 진행함.
+#### [container 가 1개인 경우]
+- deploy.yaml -> replicas = 1 지정 <br>
+![image](https://user-images.githubusercontent.com/52458039/209293831-d97c691a-6f1d-445c-afb5-4de74c5305ba.png)
+- stress 테스트 
+![image](https://user-images.githubusercontent.com/52458039/209302308-b383c343-500e-40a4-9f16-1d3de76c5f10.png)
+#### [결과 해석]
+![image](https://user-images.githubusercontent.com/52458039/209304299-dd0a47a6-5f94-4085-926c-b87f26cdbd4c.png)
+- 컨테이너를 한대만 운영하면, 워커 노드 9대 중 하나의 워커 노드, 그리고 그 워커 노드에서의 하나의 컨테이너가 전부 트래픽을 받기 때문에 상당히 느린 응답 결과가 측정됨.
+- 그래프 양상을 봤을 때, VUser 32 구간 (최대 트래픽), 즉 초기 1분 구간 에서도 지연이 발생함을 확인할 수 있음.
+
+#### [container 가 9개인 경우]
+- deploy.yaml -> replicas = 9 지정 <br>
+![image](https://user-images.githubusercontent.com/52458039/209305573-27ec3c03-dcca-44c8-ae94-138bff2fc639.png)
+- load 테스트 (VUser 32)
+![image](https://user-images.githubusercontent.com/52458039/209309257-7cb91cee-d8e0-44e2-b72c-36776f76121a.png)
+- stress 테스트
+![image](https://user-images.githubusercontent.com/52458039/209308395-0c07fd75-7463-45ac-bc13-0ce6c9e751a2.png)
+#### [결과 해석]
+![image](https://user-images.githubusercontent.com/52458039/209305214-ff5117d1-0664-4564-ab4d-6dc516372ab0.png)
+- 각 컨테이너가 각 워커 노드에 잘 할당된 모습을 볼 수 있다.
+- load 테스트를 진행 했을 때, 응답 시간이 (p95 기준) 300ms 보다는 더 늘어남. (인스턴스 9대에 대한 부하테스트 시에는 300ms 정도로 계측이 됐었음.)
+- stress 테스트를 통해 VUser 가 32 구간일떄 평균적으로 1초 정도의 응답 시간을 보여주고 있다. 이후 VUser 가 증가하면서 목표 응답시간을 맞추지 못하고 점진적으로 1초 -> 약 30초 정도로 응답 시간이 느려지는 것을 확인할 수 있다.
+
+#### [container 가 18개인 경우]
+- deploy.yaml -> replicas = 18 지정 <br>
+![image](https://user-images.githubusercontent.com/52458039/209311540-f79c5cb1-c174-43c4-b3ba-91e7f2a22c07.png)
+- load test (VUser 32)
+![image](https://user-images.githubusercontent.com/52458039/209313021-f62e08a2-4a0d-4b9a-a885-fa27605a76e9.png)
+- stress test
+![image](https://user-images.githubusercontent.com/52458039/209314467-2b918d9b-ce55-4ee4-bace-525e5afe17e1.png)
+
+#### [결과 해석]
+![image](https://user-images.githubusercontent.com/52458039/209311431-2a4a6ef3-787c-46c9-8713-f6057720dba3.png)
+- 각 워커노드에 3개, 2개, 2개, 2개, 2개, 2개, 1개, 2개, 2개의 컨테이너가 할당된 모습이다.
+- 오히려 컨테이너를 9개 -> 18개로 두배로 늘렸더니, load 테스트의 경우 그라파나의 응답 시간의 그래프 양상이 튀는 구간이 많아짐.
+  - 워커노드 한대에 여러 컨테이너가 동시에 요청을 처리하다 보니 컨테이너 1대에 비해 리소스가 부족하여 응답 지연이 더 발생하지 않았나 예상해 봄.
+- stress 테스트의 경우, container 가 9대나 18대나 응답 지연 시간만 보면 큰 차이는 없어보임.
+  - 하지만 그라파나의 응잡 지연 양상을 보면, 튀는 구간이 9대에 비해 많은 것을 확인할 수 있음. (9대일 때에 비해 18대 일때, 그래프의 요동이 많아 보임.)
+  - 이 또한 load 테스트와 비슷한 이유일 거라 추측됨.
+
+여기까지 워커노드 9대를 이용했음.
+--- 
+목표 응답 시간을 얻기 위해 워커 노드를 16대로 늘리고 테스트를 진행함.
+#### [container 가 16개인 경우]
+- deploy.yaml -> replicas = 16 지정 <br>
+![image](https://user-images.githubusercontent.com/52458039/209339886-5d95538f-6623-4475-8797-bb3f55272f4f.png)
+- load test (VUser 32)
+![image](https://user-images.githubusercontent.com/52458039/209339976-17cdfff5-0da6-4548-8d07-a567cf1141fc.png)
+- stress test
+![image](https://user-images.githubusercontent.com/52458039/209340162-a78a4bff-c2a4-4c4e-b452-8ae720a137f4.png)
+
+#### [결과 해석]
+- 워커 노드 16대, 컨테이너 16개를 사용했을 때, load test 에서 원하는 목표 응답 시간을 얻을 수 있었음.
+- stress test 결과도 마찬가지로 VUser 32 구간까지는 목표 응답시간을 만족함.
+  - VUser 64 부터는 1.5초 대로 목표 응답시간을 맞추지 못함.
 
 3. 현재 워커노드에서 몇대의 컨테이너를 운영중인지 공유해주세요
+- 워커 노드 1대당 컨테이너 1개 씩 운영하였음. 
 
 ---
 
