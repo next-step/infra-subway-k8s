@@ -277,6 +277,33 @@ smoke, load, stress 에 사용된 스크립트를 수정함. (특히, stress 테
 3. 현재 워커노드에서 몇대의 컨테이너를 운영중인지 공유해주세요
 - 워커 노드 1대당 컨테이너 1개 씩 운영하였음. 
 
+
+#### [피드백 반영]
+- mysql max_connection 은 현재 151 임.
+  ![image](https://user-images.githubusercontent.com/52458039/209455782-f7f047fe-4f41-4213-b95c-8456265bc5e2.png)
+- stress 테스트 전, mysql status 는 아래와 같다.
+![image](https://user-images.githubusercontent.com/52458039/209456285-186a3d66-c11f-4609-a332-b66002a4dfb5.png)
+![image](https://user-images.githubusercontent.com/52458039/209456278-b4e31ccf-9bec-4ea1-ba8d-dfc196aa570d.png)
+
+- stress 테스트 후, mysql status 는 아래와 같다.
+![image](https://user-images.githubusercontent.com/52458039/209455817-d478eea7-6a1d-4eda-987e-ae6202199bf2.png)
+![image](https://user-images.githubusercontent.com/52458039/209456259-655c30be-0c6f-4640-9f16-6158a0eec173.png)
+- Connection Usage (%) = Threads_connected / max_connections * 100 = 152 / 151 * 100 = 100% 를 넘어섬.
+- 실시간으로 부하테스트 진행하며 status 를 관찰한 결과 시작하자마자 Thread_connected 는 152 로 최대 max connection 만큼의 스레드가 생성되고 연결되어 요청을 처리하고 있음.
+- 모든 connection 이 연결된 상태로 요청을 계속해서 받다보니 지연이 계속 발생하게됨. -> 테스트 약 1분이 지나면 aborted_clients 갯수가 늘어나는 것을 확인함. (hikaricp connection timeout default 값이 30s 이므로 초반의 낮은 rps 를 처리하는 것을 감안하여 1분 정도 후 지연으로 인한 요청 거부 현상이 생기는 것은 타당해 보임.)
+- 현재 워커노드 16대에 컨테이너 16대를 운영중에 있고, hikaricp default max connection pool default 10 인 상황이므로, 실시간으로 디비 connection 이 최소 160개를 계속 유지하며 요청을 하는 상황이므로, mysql 의 max_connections 로 인한 문제가 없게끔 151 -> 2000 정도로 늘리고 다시 부하테스트를 진행한다.<br>
+![image](https://user-images.githubusercontent.com/52458039/209456573-9628a5dd-7ed1-4162-84f1-2eb185db214a.png)
+- 부하테스트 결과
+![image](https://user-images.githubusercontent.com/52458039/209456713-13848f5f-2a51-4b45-97dd-7b88890adbb0.png)
+![image](https://user-images.githubusercontent.com/52458039/209456756-7e39f11d-5941-47b1-9ac9-1d7c269113e0.png)
+- 커넥션으로 인한 에러는 발생하지 않음.
+- max_connection 설정과 비교하여 p95 값은 많이 개선됨.
+- 초반 피크 구간 (VUser 32) 에서는 이전 테스트에서도 connection 문제는 없었을 것이므로 응답 시간이 비슷한 모습이다.
+- 1분 이후부터 p90 과 p95 값이 차이가 많이 나기 시작함. (이전 테스트에서는 둘다 비슷한 응답시간의 양상을 보였음. 튀는 부분이 별로 없고 연속적으로 응답시간이 지연되는 모습이었음.)
+  - connection 문제는 해결되었지만, thread 별로 요청을 처리하는 시간이 상이한것으로 예상됨 -> 이전 테스트에 비해 커넥션을 잘 가져와서 요청을 처리했기에 빠른 응답시간이 좀더 많아진 것으로 예상됨. (하지만 rps 가 높아지면서 여전히 요청 지연 현상은 남아있음) 
+  - VUser 64 부터는 원하는 목표 응답시간을 잘 처리하지는 못하는 모습임. 
+
+
 ---
 
 ### [추가] WAS 개선하기
