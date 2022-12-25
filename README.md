@@ -310,7 +310,22 @@ smoke, load, stress 에 사용된 스크립트를 수정함. (특히, stress 테
 
 1. springboot에 HTTP Cache, gzip 설정하기
 
+- 모든 정적 자원에 대해 no-cache, no-store 설정을 해보세요. 가능한가요? 실무에서 no-cache, no-store, must-revalidate 를 모두 설정하는 이유는 무엇일까요?
+  - no-store 만으로 캐시가 무효화 되야 하지만 HTTP 스펙이 모든 상황을 완벽하게 정의하지 못할 수 있음.
+  - 브라우저간의 호환도 다를 수 있음. -> 이러한 이유로 no-store 만으로 캐시 무효화를 할 수 없을 수 있음.
+  - 따라서 3가지 설정을 모두 함께 사용하여 최대한 캐시 무효화를 적용하고자 한다.
+
+
 2. Data Cache 설정하기
+
+Redis cache 적용 후 결과
+![image](https://user-images.githubusercontent.com/52458039/209484159-96ddb841-6dd2-4fba-86ef-12b4e2c00a52.png)
+![image](https://user-images.githubusercontent.com/52458039/209463704-6f5a0bdd-1279-48ff-8ece-5f1a908f09cb.png)
+![image](https://user-images.githubusercontent.com/52458039/209484203-2dfd1235-2f95-42d9-936c-a4269377f66c.png)
+- 지하철 역 탐색 API 에서 source 와 target 파라미터에 대한 cache 설정을 진행 후, 초기 조회를 제외한 나머지 요청은 모두 캐싱된 데이터를 조회하기 때문에 목표 응답시간을 맞추고도 남는 응답속도를 보여줌
+  - 캐싱 이후의 응답시간은 브라우저 -> WAS (각 컨테이너들) -> 레디스 에서 지연이 발생했을 것이고, 빠른 응답 속도를 가져올 수 있었음.
+- InfluxDBv1 의 request entity 가 too large 라는 로그와 함께 그라파나로 찍힌 모습임.
+  - 레디스로 바꾸고 나서 찍힌 것 같은데 원인을 정확하게 모르겠음. 추측컨대 LocalDateTime 을 직렬화 하는 과정에서 큰 데이터를 전송해서 문제가 생기는 것이 아닌가 생각해 봄.
 
 ---
 
