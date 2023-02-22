@@ -79,9 +79,10 @@ where record.record_symbol = 'O';
 1. 인덱스 적용해보기 실습을 진행해본 과정을 공유해주세요
 - [X] Coding as a Hobby 와 같은 결과를 반환하세요.
     ~~~sql
-    select hobby, concat(round(count(1) / (select count(1) from programmer) * 100, 1), '%')
-    from programmer
-    group by hobby desc;
+     select 
+        round(count(case hobby when 'YES' then 1 end) / count(hobby) * 100, 1) as YES_PERSENT
+        , round(count(case hobby when 'NO' then 1 end) / count(hobby) * 100, 1) as NO_PERSENT
+    from subway.programmer;
     ~~~
     - 인덱스 추가전: 4.236s
       - ![](./mission/step2/question1-before.png)
@@ -89,8 +90,10 @@ where record.record_symbol = 'O';
       ~~~sql
       create index idx_programmer_hobby on programmer (hobby);
       ~~~
-    - 인덱스 추가후: 0.467s
+    - 인덱스 추가후: 0.279
       - ![](./mission/step2/question1-after.png)
+    - 리뷰 반영 쿼리
+      - ![](./mission/step2/question1-review.png)
 
 - [x] 프로그래머별로 해당하는 병원 이름을 반환하세요. (covid.id, hospital.name)
     ~~~sql
@@ -156,6 +159,34 @@ where record.record_symbol = 'O';
       ~~~
     - 인덱스 추가후: 0.148s
         - ![](./mission/step2/question4-after.png)
+    - 리뷰 반영 과정
+      - 인덱스 추가
+        - ~~~sql
+          create unique index idx_hospital_name on hospital (name);
+          create index idx_member_id_age on member(id, age);
+          create index idx_programmer_id_country on programmer(id, country);
+          create index idx_hospital_id_name on hospital(id, name);
+          create index idx_covid_id_stay on covid(id, stay);
+          ~~~
+        - ![](./mission/step2/question4-review1.png)
+      - hospital 테이블에 name 을 유니크 인덱스로 추가 후 필터링 대상 감소 확인 
+      - 결합 인덱스를 이것저것 추가 해봤지만 filesort 는 제거하지 못했습니다.
+    - 인덱스 추가 및 쿼리 변경 
+      - ~~~sql
+        select c.stay,
+            count(1) as cnt
+        from (select id from programmer where country = 'India') p
+                inner join covid c on c.programmer_id = p.id
+                inner join (select id from member where age between 20 and 29) m on m.id = c.member_id
+                inner join (select id from hospital where name ='서울대병원') h on h.id = c.hospital_id
+        group by c.stay;
+        ~~~
+      - programmer 테이블 유니크키 제거 
+        - ~~~sql
+          alter table programmer drop primary key;
+          ~~~
+      - 리뷰주신 실행계획과 비슷하게 나왔지만 역시 filesort 는 제거하지 못했습니다.
+      - ![](./mission/step2/question4-review2.png)
   
 - [x] 서울대병원에 다닌 30대 환자들을 운동 횟수별로 집계하세요. (user.Exercise)
     ~~~sql
