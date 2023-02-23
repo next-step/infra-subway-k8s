@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+
+spec:
+  replicas: 3
+  # 컨테이너의 라벨을 선택
+  selector:
+    matchLabels:
+      run: app
+  strategy:
+    # RollingUpdate | Recreate (잘 안쓰임)
+    type: RollingUpdate
+
+    rollingUpdate:
+      # RollingUpdate 중 최대 중단 Pod 허용개수 (또는 비율)
+      maxUnavailable: 25%
+      # RollingUpdate 중 최대 초과 Pod 허용개수 (또는 비율)
+      maxSurge: 25%
+  template:
+    metadata:
+      labels:
+        run: app
+    # Pod의 spec과 같음
+    spec:
+      containers:
+        - name: subway
+          #image: brainbackdoor/javascript-subway-api:0.0.1
+          image: bingbingpa/subway
+          imagePullPolicy: Always
+          env:
+            - name: MYSQL_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: db-configmap
+                  key: MYSQL_DB_HOST
+            - name: MYSQL_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: db-configmap
+                  key: MYSQL_DB_PORT
+            - name: MYSQL_DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-configmap
+                  key: MYSQL_DB_USER
+            - name: MYSQL_DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: db-configmap
+                  key: MYSQL_DB_PASSWORD

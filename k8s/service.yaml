@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    hello: world
+  name: subway-service
+
+spec:
+  # type: ClusterIP 가 생략되어 있음
+  ports:
+    # Service의 inbound port
+    - port: 80
+      protocol: TCP
+      # port forwarding 하는 port
+      targetPort: 8080
+
+  # 트래픽을 전달할 컨테이너의 라벨을 선택
+  selector:
+    run: app

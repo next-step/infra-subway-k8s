@@ -1,0 +1,23 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: http-issuer
+
+spec:
+  # 자동으로 인증서의 생성 및 연장을 관리해주는 타입
+  acme:
+    email: bingbingpa@gmail.com
+
+    # 어떤 acme 서버(인증서 발급 CA)를 사용할지 지정
+    server: https://acme-v02.api.letsencrypt.org/directory
+
+    # 사용자의 개인키를 저장할 Secret 리소스 이름을 지정
+    privateKeySecretRef:
+      name: issuer-key
+
+    # 도메인 주소에 대한 소유권을 증명하기 위한 방법 선택. http 요청(http01)과 DNS Lookup(dns01) 방법이 있음
+    solvers:
+      - http01:
+          # Ingress 컨트롤러로 NGINX를 사용
+          ingress:
+            class: nginx
