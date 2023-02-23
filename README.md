@@ -77,7 +77,132 @@ where record.record_symbol = 'O';
 ### 2단계 - 인덱스 설계
 
 1. 인덱스 적용해보기 실습을 진행해본 과정을 공유해주세요
+- [X] Coding as a Hobby 와 같은 결과를 반환하세요.
+    ~~~sql
+     select 
+        round(count(case hobby when 'YES' then 1 end) / count(hobby) * 100, 1) as YES_PERSENT
+        , round(count(case hobby when 'NO' then 1 end) / count(hobby) * 100, 1) as NO_PERSENT
+    from subway.programmer;
+    ~~~
+    - 인덱스 추가전: 4.236s
+      - ![](./mission/step2/question1-before.png)
+    - 인덱스 추가 
+      ~~~sql
+      create index idx_programmer_hobby on programmer (hobby);
+      ~~~
+    - 인덱스 추가후: 0.279
+      - ![](./mission/step2/question1-after.png)
+    - 리뷰 반영 쿼리
+      - ![](./mission/step2/question1-review.png)
 
+- [x] 프로그래머별로 해당하는 병원 이름을 반환하세요. (covid.id, hospital.name)
+    ~~~sql
+    select c.id   as covid_id,
+       h.name as hospital_name
+    from programmer p
+            inner join covid c on c.programmer_id = p.id
+            inner join hospital h on c.hospital_id = h.id;
+    ~~~
+    - 인덱스 추가전: 4.033s
+      - ![](./mission/step2/question2-before.png)
+    - 인덱스 추가
+      ~~~sql
+      alter table programmer add primary key(id);
+      alter table hospital add primary key(id);
+      create index idx_covid_programmer_id on covid (programmer_id);
+      ~~~
+    - 인덱스 추가후: 0.033s
+      - ![](./mission/step2/question2-after.png)
+
+- [x] 프로그래밍이 취미인 학생 혹은 주니어(0-2년)들이 다닌 병원 이름을 반환하고 user.id 기준으로 정렬하세요. (covid.id, hospital.name, user.Hobby, user.DevType, user.YearsCoding)
+    ~~~sql
+    select c.id           as covid_id,
+            h.name         as hospital_name,
+            a.hobby        as hobby,
+            a.dev_type     as dev_type,
+            a.years_coding as years_coding
+    from (select p.id,
+                 p.hobby,
+                 p.dev_type,
+                 p.years_coding
+    from programmer p
+    where p.hobby = 'Yes'
+      and (p.dev_type = 'Student'
+        or p.years_coding = '0-2 years')
+    order by p.id) as a
+        inner join covid c on c.programmer_id = a.id
+        inner join hospital h on c.hospital_id = h.id;
+    ~~~
+    - 별도 인덱스 추가 안함: 0.170s
+      - ![](./mission/step2/question3.png)
+
+- [x] 서울대병원에 다닌 20대 India 환자들을 병원에 머문 기간별로 집계하세요. (covid.Stay)
+    ~~~sql
+    select c.stay,
+       count(1) as cnt
+    from programmer p
+            inner join covid c on c.programmer_id = p.id
+            inner join member m on m.id = c.member_id
+            inner join hospital h on h.id = c.hospital_id
+    where h.name = '서울대병원'
+      and m.age between 20 and 29
+      and p.country = 'India'
+    group by c.stay;
+    ~~~
+    - 인덱스 추가전: 13.740s
+        - ![](./mission/step2/question4-before.png)
+    - 인덱스 추가
+      ~~~sql
+      alter table member add primary key(id);
+      create index idx_hospital_name on hospital (name);
+      create index idx_covid_hospital_id on covid (hospital_id);
+      ~~~
+    - 인덱스 추가후: 0.148s
+        - ![](./mission/step2/question4-after.png)
+    - 리뷰 반영 과정
+      - 인덱스 추가
+        - ~~~sql
+          create unique index idx_hospital_name on hospital (name);
+          create index idx_member_id_age on member(id, age);
+          create index idx_programmer_id_country on programmer(id, country);
+          create index idx_hospital_id_name on hospital(id, name);
+          create index idx_covid_id_stay on covid(id, stay);
+          ~~~
+        - ![](./mission/step2/question4-review1.png)
+      - hospital 테이블에 name 을 유니크 인덱스로 추가 후 필터링 대상 감소 확인 
+      - 결합 인덱스를 이것저것 추가 해봤지만 filesort 는 제거하지 못했습니다.
+    - 인덱스 추가 및 쿼리 변경 
+      - ~~~sql
+        select c.stay,
+            count(1) as cnt
+        from (select id from programmer where country = 'India') p
+                inner join covid c on c.programmer_id = p.id
+                inner join (select id from member where age between 20 and 29) m on m.id = c.member_id
+                inner join (select id from hospital where name ='서울대병원') h on h.id = c.hospital_id
+        group by c.stay;
+        ~~~
+      - programmer 테이블 유니크키 제거 
+        - ~~~sql
+          alter table programmer drop primary key;
+          ~~~
+      - 리뷰주신 실행계획과 비슷하게 나왔지만 역시 filesort 는 제거하지 못했습니다.
+      - ![](./mission/step2/question4-review2.png)
+  
+- [x] 서울대병원에 다닌 30대 환자들을 운동 횟수별로 집계하세요. (user.Exercise)
+    ~~~sql
+    select p.exercise        as user_exercise,
+            count(p.exercise) as cnt
+    from programmer p
+            inner join covid c on c.programmer_id = p.id
+            inner join hospital h on h.id = c.hospital_id
+            inner join member m on m.id = c.member_id
+    where h.name = '서울대병원'
+      and m.age between 30 and 39
+    group by p.exercise;
+    ~~~
+    - 별도 인덱스 추가 안함: 0.167s
+      - ![](./mission/step2/question5.png)
+    
 ---
 
 
