@@ -52,7 +52,15 @@ npm run dev
 ### 2단계 - 인덱스 설계
 
 1. 인덱스 적용해보기 실습을 진행해본 과정을 공유해주세요
-
+   1. 첫 실행 시 4.8초 정도 나오고 전부 풀 스캔을 확인.
+   조인 시 사용하는 컬럼을 기준으로 programmer.id, hospital.id를 각각 pk로 만들고 covid.programmer_id를 유니크 인덱스로 설정 후 다시 실행 계획을 보니 설정한 키를 잘 타고 있음.
+   다만 programmer 테이블이 full index scan 이긴 하지만 별도의 조건이 없고 걸린시간도 0.029s 라서 준수하다고 판단함.
+   ```sql
+    select p.id, c.id, h.name
+    from programmer p
+    join covid c on c.programmer_id = p.id
+    join hospital h on h.id = c.hospital_id
+   ```
 ---
 
 
