@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-configmap
+data:
+  MYSQL_DB_HOST: '172.20.50.2'
+  MYSQL_DB_PORT: '3306'
+  MYSQL_DB_USER: 'root'
+  MYSQL_DB_PASSWORD: 'masterpw'

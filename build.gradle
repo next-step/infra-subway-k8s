@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.0-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
+	id 'com.google.cloud.tools.jib' version '3.2.0'
 }
 
 group = 'nextstep'
@@ -35,8 +36,22 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	runtimeOnly 'com.h2database:h2'
+	implementation 'mysql:mysql-connector-java'
 }
 
 test {
 	useJUnitPlatform()
+}
+
+jib {
+	from {
+		image = "eclipse-temurin:11-jre"
+	}
+	to {
+		image = "bingbingpa/subway"
+		tags = ["latest"]
+	}
+	container {
+		jvmFlags = ["-Dspring.profiles.active=prod", "-Xms1024m", "-Xmx1024m"]
+	}
 }
