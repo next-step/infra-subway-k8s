@@ -52,7 +52,16 @@ npm run dev
 ### 2단계 - 인덱스 설계
 
 1. 인덱스 적용해보기 실습을 진행해본 과정을 공유해주세요
-   1. 프로그래머별로 해당하는 병원 이름을 반환하세요.
+   1. Coding as a Hobby 와 같은 결과를 반환하세요.
+      1. 첫 실행 시 2.3s 정도 나왔으며 full table scan 으로 실행됨
+      2. programmer.hobby 를 인덱스로 추가 후 full index scan 으로 실행되고 0.232s 걸림
+      ```sql
+      select
+        concat(round(count(case when hobby = 'Yes' then 1 end) / count(*) * 100, 1), '%') as Yes,
+        concat(round(count(case when hobby = 'No' then 1 end) / count(*) * 100, 1), '%') as No
+      from programmer;
+      ```
+   2. 프로그래머별로 해당하는 병원 이름을 반환하세요.
       1. 첫 실행 시 4.8s 정도 나오고 전부 풀 스캔을 확인.
       2. 조인 시 사용하는 컬럼을 기준으로 programmer.id, hospital.id를 각각 pk로 만들고 covid.programmer_id를 유니크 인덱스로 설정 후 다시 실행 계획을 보니 설정한 키를 잘 타고 있음.
       3. 다만 programmer 테이블이 full index scan 이긴 하지만 별도의 조건이 없고 걸린시간도 0.029s 라서 준수하다고 판단함.
@@ -62,7 +71,7 @@ npm run dev
     join covid c on c.programmer_id = p.id
     join hospital h on h.id = c.hospital_id
    ```
-   2. 프로그래밍이 취미인 학생 혹은 주니어(0-2년)들이 다닌 병원 이름을 반환하고 user.id 기준으로 정렬하세요.
+   3. 프로그래밍이 취미인 학생 혹은 주니어(0-2년)들이 다닌 병원 이름을 반환하고 user.id 기준으로 정렬하세요.
       1. 첫 실행 시 0.027s 가 나와서 준수한 결과라고 판단함.
       2. where 조건에 있는 programmer.hobby와 programmer.years_coding 를 인덱스로 고려해 보았지만 카디널리티가 너무 낮다고 생각했고, 실제 적용했을 때도 효과가 없었음
    ```sql
@@ -75,7 +84,7 @@ npm run dev
         or p.years_coding = '0-2 years'
     order by p.id
    ```
-   3. 서울대병원에 다닌 20대 India 환자들을 병원에 머문 기간별로 집계하세요.
+   4. 서울대병원에 다닌 20대 India 환자들을 병원에 머문 기간별로 집계하세요.
       1. 첫 실행 시 member, programmer, covid 테이블 모두 full table scan 으로 나옴.
       2. member.id 를 pk로 만들고 covid.member_id, programmer.member_id 를 유니크 인덱스로 만들어서 다시 실행 계획을 보니 member 외에 모두 range scan으로 바뀜.
       3. member.age 를 index로 설정하였으나 효과가 없어서 삭제.
@@ -96,7 +105,7 @@ npm run dev
     group by c.stay
     order by null
    ```
-   4. 서울대병원에 다닌 30대 환자들을 운동 횟수별로 집계하세요.
+   5. 서울대병원에 다닌 30대 환자들을 운동 횟수별로 집계하세요.
       1. 첫 실행 시 전부 range, constant scan 이었고 실행해 보니 0.259s 걸림
    ```sql
     select p.exercise, count(p.exercise)
