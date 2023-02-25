@@ -61,6 +61,18 @@ npm run dev
     join covid c on c.programmer_id = p.id
     join hospital h on h.id = c.hospital_id
    ```
+   2. 첫 실행 시 0.027s 가 나와서 준수한 결과라고 판단함. where 조건에 있는 programmer.hobby와 programmer.years_coding 를 인덱스로 고려해 보았지만
+   카디널리티가 너무 낮다고 생각했고, 실제 적용했을 때도 효과가 없었음
+   ```sql
+    select c.id, h.name, p.hobby, p.dev_type, p.years_coding
+    from programmer p
+    join covid c on c.programmer_id = p.id
+    join hospital h on h.id = c.hospital_id
+    where
+    p.hobby = 'Yes'
+    or p.years_coding = '0-2 years'
+    order by p.id
+   ```
 ---
 
 
