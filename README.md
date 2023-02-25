@@ -69,9 +69,29 @@ npm run dev
     join covid c on c.programmer_id = p.id
     join hospital h on h.id = c.hospital_id
     where
-    p.hobby = 'Yes'
-    or p.years_coding = '0-2 years'
+        p.hobby = 'Yes'
+        or p.years_coding = '0-2 years'
     order by p.id
+   ```
+   3. 첫 실행 시 member, programmer, covid 테이블 모두 full table scan 으로 나옴.
+   member.id 를 pk로 만들고 covid.member_id, programmer.member_id 를 유니크 인덱스로 만들어서 다시 실행 계획을 보니 member 외에 모두 range scan으로 바뀜.
+   member.age 를 index로 설정하였으나 효과가 없어서 삭제.
+   기존 programmer.member_id 유니크 인덱스를 삭제하고 programmer.member_id 와 programmer.country를 결합하여 유니크 인덱스로 설정하니 인덱스를 잘 탔지만 programmer 에서 index full scan 발생.
+   조건 중에 병원이름이 있다는 것을 확인하고 hospital.name을 유니크 인덱스로 설정하니 programmer 가 index range scan으로 바뀌고 full scan이 없어짐.
+   covid.hospital_id를 인덱스로 추가함.
+   group by로 인한 filesort를 없애기 위해 order by null 적용 후 실행해보니 0.218s 나옴
+   ```sql
+    select c.stay, count(c.stay)
+    from member m
+    join programmer p on m.id = p.member_id
+    join covid c on m.id = c.member_id
+    join hospital h on c.hospital_id = h.id
+    where
+        m.age between 20 and 29
+        and p.country = 'India'
+        and h.name = '서울대병원'
+    group by c.stay
+    order by null
    ```
 ---
 
