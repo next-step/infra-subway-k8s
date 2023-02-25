@@ -93,6 +93,19 @@ npm run dev
     group by c.stay
     order by null
    ```
+   4. 첫 실행 시 전부 range, constant scan 이었고 실행해 보니 0.259s 걸림
+   ```sql
+    select p.exercise, count(p.exercise)
+    from member m
+    join programmer p on m.id = p.member_id
+    join covid c on m.id = c.member_id
+    join hospital h on c.hospital_id = h.id
+    where
+        m.age between 30 and 39
+        and h.name = '서울대병원'
+    group by p.exercise
+    order by null
+   ```
 ---
 
 
